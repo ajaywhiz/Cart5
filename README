@@ -1,0 +1,61 @@
+Cart5 is just a proof of concept to show one of the possibilities to change the user experience of a typical shopping cart using the features of HTML5.
+
+You can read about HTML5 specs at
+
+ 
+
+1)   Web Hypertext Application Technology Working Group (WHATWG)
+
+2)   W3C
+
+ 
+
+This shopping cart primarily focuses on the Drag ‘n Drop feature in HTML5. It shows how Drag ‘n Drop can be used to enhance the shopping experience on your site.
+
+ 
+
+Some HTML5 features explored in this sample application are
+
+1) Drag 'n Drop
+
+2) Document/CSS Selectors
+
+3) Local Storage
+
+ 
+
+The other new technologies/trends used in this application are
+
+1)      ASP.NET MVC 3 Preview 1
+
+2)      Document Database using RavenDB
+
+3)      Razor View Engine
+
+Prerequisites for compiling and running the code on your machine
+
+1)      Visual Studio 2010
+
+2)      ASP.NET MVC 3 Preview 1
+
+3)      RavenDB
+
+ 
+
+ Getting started
+
+1)      Install RavenDB
+
+2)      Install ASP.NET MVC3 Preview 1
+
+3)      You can import some product data into RavenDB from cart5.dump (attached in this post) file using RavenSmuggler utility e.g. > RavenSmuggler in http://localhost:8080 cart5.dump
+
+Or you can start adding products by navigating to /Product/Create view in the application.
+
+4)      Open the CartFive.sln in Visual Studio 2010 to compile and run the application.
+
+I have tested it on Firefox 4 beta 5 and Chrome 6. I had tried it on IE 9 Preview 4 but, didnt work well.
+
+I am not so good at creativity so you may find the UI very rudimentary.
+
+some UI elements are taken from html5demos.com and jQuery Tools
