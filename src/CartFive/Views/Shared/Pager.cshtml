@@ -1,0 +1,43 @@
+﻿@inherits System.Web.Mvc.WebViewPage<dynamic>
+@using CartFive.Utils
+@using CartFive.ViewModel
+
+@{IPagingProperties pageSettings = (IPagingProperties)Model;}
+@if (pageSettings != null)
+{
+<div class="pages">
+@{int TotalRecords = pageSettings.TotalRecords / pageSettings.PageSize;}
+	@if(TotalRecords * pageSettings.PageSize != pageSettings.TotalRecords)
+	{
+		TotalRecords = TotalRecords + 1;
+	}
+	@for(int iLoop = 1; iLoop <= (TotalRecords ); iLoop++)
+	{
+		if(iLoop!=pageSettings.PageIndex)
+		{
+			if (pageSettings.PageIndex >1  && iLoop == 1)
+			{
+				<a  href="?Move=Prev&page=@(pageSettings.PageIndex-1)@{if(pageSettings.QueryString!=null){<text>&</text>@pageSettings.QueryString;}}">Previous</a>
+			}	
+
+			<a href="?page=@iLoop@{if(pageSettings.QueryString!=null){<text>&</text>@pageSettings.QueryString;}}">@iLoop</a>
+			if (iLoop == TotalRecords)
+			{
+				<a href="?Move=Next&page=@(pageSettings.PageIndex+1)@{if(pageSettings.QueryString!=null){<text>&</text>@pageSettings.QueryString;}}">Next</a>
+			}
+		}
+		else
+		{
+			if (pageSettings.PageIndex == 1 && iLoop == 1)
+			{
+				 <span class="np">Previous</span>				
+			}
+			<span class="selected">@iLoop</span>
+			if (iLoop == TotalRecords)
+			{
+			<span class="np">Next</span>
+			}
+		}
+	}
+</div>
+}

@@ -1,0 +1,71 @@
+﻿@inherits System.Web.Mvc.WebViewPage<CartFive.ViewModel.ProductIndexViewModel>
+
+@{
+    View.Title = "Index";
+    LayoutPage = "~/Views/Shared/Layout.cshtml";
+}
+
+@section Head
+{
+<script type="text/javascript">
+$.fn.resize = function(max_size) {
+  m = Math.ceil;
+  if (max_size == undefined) {
+    max_size = 200;
+  }
+  h=w= max_size;
+  $(this).each(function() {
+    image_h = $(this).height();
+    image_w = $(this).width();
+    if (image_h > image_w) {
+      w = m(image_w / image_h * max_size);
+    } else {
+      h = m(image_h / image_w * max_size);
+    }
+    $(this).css({height:h,width:w});
+  })
+};
+
+</script>
+}
+ @section Title
+{
+<section id="title">
+    <header>
+      <h1>Product List</h1>
+    </header>
+</section>
+}
+
+    <table border="1" cellpadding="2" cellspacing="1">
+        <tr>            
+            <th>Product</th>
+            <th>Price</th>                        
+			<th>Image</th>
+			<th></th>
+        </tr>
+		<tbody>
+    @foreach (var item in Model.Products) {
+    
+        <tr>            
+            <td>@item.Name</td>
+            <td>@item.Price</td>
+            <td><img src="@item.ImageUrl" style="border:0px;" /></td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
+                @Html.ActionLink("Details", "Details", new { id=item.Id }) |
+                @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+            </td>
+        </tr>
+    
+    }
+	</tbody>
+    </table>
+	<div>@Html.Partial("Pager")</div>
+    <p>
+        @Html.ActionLink("Create New", "Create")
+    </p>
+	<script type="text/javascript">
+	$("img").resize(150);
+	</script>
+

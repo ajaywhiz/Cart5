@@ -1,0 +1,84 @@
+﻿@inherits System.Web.Mvc.WebViewPage<CartFive.Models.Order>
+
+@{
+	View.Title = "Checkout";
+	LayoutPage = "~/Views/Shared/Layout.cshtml";
+}
+
+@section Head
+{
+<script type="text/javascript" src="/scripts/logger.js"></script>
+<script type="text/javascript" src="/scripts/dndhandler.js"></script>
+<script type="text/javascript" src="/scripts/cart.js"></script>
+<script type="text/javascript">
+$.fn.resize = function(max_size) {
+  m = Math.ceil;
+  if (max_size == undefined) {
+	max_size = 200;
+  }
+  h=w= max_size;
+  $(this).each(function() {
+	image_h = $(this).height();
+	image_w = $(this).width();
+	if (image_h > image_w) {
+	  w = m(image_w / image_h * max_size);
+	} else {
+	  h = m(image_h / image_w * max_size);
+	}
+	$(this).css({height:h,width:w});
+  })
+};
+</script>
+}
+
+@section Title
+{
+<section id="title">
+	<header>
+	  <h1>Cart5 - Checkout</h1>
+	</header>
+</section>
+}    
+
+@using (Html.BeginForm()) {
+   <table border="1" cellpadding="2" style="width:90%;">
+   <tr>
+	<th></th>
+	<th>Product</th>
+	<th>Quantity</th>
+	<th>Price</th>
+	<th>Total</th>
+   </tr>
+   @foreach (var item in Model.OrderItems) 
+	{
+		<tr>
+			<td><img alt="@item.Name" title="@item.Name" src="@item.Image" style="border:0px;" class="product"/></td>
+			<td>@item.Name</td>
+			<td>@item.Qty</td>
+			<td>@item.Price</td>			
+			<td align="right">$@(item.Qty*item.Price)</td>
+		</tr>
+	}
+	<tr>
+		<td colspan="5" align="right">Total Amount: $@Model.TotalAmount</td>
+	</tr>
+	<tr>
+		<td colspan="5" align="right">Discount: -$@Model.Discount</td>
+	</tr>
+	<tr>
+		<td colspan="5" align="right">Payable Amount: $@Model.PayableAmount</td>
+	</tr>
+	<tr>
+		<td colspan="5" align="center"> <input type="submit" name="goto" value="Shop More!"/> <input name="goto" type="submit" value="Enter Delivery Information"/></td>
+	</tr>
+   </table>
+   }
+   <script type="text/javascript">
+   $(".product").resize(150);
+   var myCart;
+	addEvent(window,"load",function(e){
+		myCart=new cart();	
+		myCart.loadCart();
+
+	});
+   </script>

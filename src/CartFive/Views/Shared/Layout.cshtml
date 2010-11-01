@@ -1,0 +1,19 @@
+﻿@inherits System.Web.Mvc.WebViewPage
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+	<meta charset=utf-8>
+    <title>@View.Title</title>
+	<link href="/Content/Site.css" rel="stylesheet" type="text/css" />
+	<script src="http://cdn.jquerytools.org/1.2.4/full/jquery.tools.min.js"></script>
+	<script type="text/javascript" src="/scripts/utils.js"></script>
+	@RenderSection("Head",optional:true);
+</head>
+<body>
+    @RenderSection("Title",optional:true)
+	<article><div>@RenderBody()</div></article>
+    <footer>&copy; Copyright Foobar.com</footer>     
+        
+    
+</body>
+</html>

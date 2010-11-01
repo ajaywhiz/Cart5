@@ -1,0 +1,105 @@
+﻿@inherits System.Web.Mvc.WebViewPage<CartFive.Models.Order>
+
+@{
+    View.Title = "Order";
+    LayoutPage = "~/Views/Shared/Layout.cshtml";
+}
+
+@section Title
+{
+<section id="title">
+	<header>
+	  <h1>Cart5 - Order</h1>
+	</header>
+</section>
+}    
+
+@section Head
+{
+<script type="text/javascript">
+$.fn.resize = function(max_size) {
+  m = Math.ceil;
+  if (max_size == undefined) {
+	max_size = 200;
+  }
+  h=w= max_size;
+  $(this).each(function() {
+	image_h = $(this).height();
+	image_w = $(this).width();
+	if (image_h > image_w) {
+	  w = m(image_w / image_h * max_size);
+	} else {
+	  h = m(image_h / image_w * max_size);
+	}
+	$(this).css({height:h,width:w});
+  })
+};
+</script>
+}
+
+    @using (Html.BeginForm()) {
+        @Html.ValidationSummary(true)
+		<div>
+        <fieldset>
+            <legend>Need some information</legend>            
+            
+            <div>
+				<input type="text" name="Name" id="Name" placeholder="Your Name"/>
+                @Html.ValidationMessage("Name")
+            </div>
+            
+            <div>
+				<textarea name="Address" id="Address" placeholder="Delivery address"></textarea>
+                @Html.ValidationMessage("Address")
+            </div>
+			            
+            <div>
+                <input type="email" name="Email" id="Email" placeholder="Email">
+                @Html.ValidationMessage("Email")
+            </div>
+            
+            <p>
+                 @Html.ActionLink("Shop More", "Index") <input type="submit" value="Order Now!" />
+            </p>
+        </fieldset>
+	</div>
+
+		<table border="1" cellpadding="2" style="width:90%;">
+   <tr>
+	<th></th>
+	<th>Product</th>
+	<th>Quantity</th>
+	<th>Price</th>
+	<th>Total</th>
+   </tr>
+		@foreach (var item in Model.OrderItems) 
+	{
+		<tr>
+			<td><img alt="@item.Name" title="@item.Name" src="@item.Image" style="border:0px;" class="product"/></td>
+			<td>@item.Name</td>
+			<td>@item.Qty</td>
+			<td>@item.Price</td>			
+			<td align="right">$@(item.Qty*item.Price)</td>
+		</tr>
+	}
+	<tr>
+		<td colspan="5" align="right">Total Amount: $@Model.TotalAmount</td>
+	</tr>
+	<tr>
+		<td colspan="5" align="right">Discount: -$@Model.Discount</td>
+	</tr>
+	<tr>
+		<td colspan="5" align="right">Payable Amount: $@Model.PayableAmount</td>
+	</tr>	
+   </table>   
+   <script type="text/javascript">
+   $(".product").resize(150);  
+   </script>
+   
+    }
+
+    <div>
+       
+    </div>
+
+

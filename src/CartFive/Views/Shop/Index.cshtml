@@ -1,0 +1,223 @@
+﻿@inherits System.Web.Mvc.WebViewPage<CartFive.ViewModel.ProductIndexViewModel>
+
+@{
+	View.Title = "Index";
+	LayoutPage = "~/Views/Shared/Layout.cshtml";
+}
+
+@section Head
+{
+<script type="text/javascript" src="/scripts/logger.js"></script>
+<script type="text/javascript" src="/scripts/dndhandler.js"></script>
+<script type="text/javascript" src="/scripts/cart.js"></script>
+<script type="text/javascript">
+$.fn.resize = function(max_size) {
+  m = Math.ceil;
+  if (max_size == undefined) {
+	max_size = 200;
+  }
+  h=w= max_size;
+  $(this).each(function() {
+	image_h = $(this).height();
+	image_w = $(this).width();
+	if (image_h > image_w) {
+	  w = m(image_w / image_h * max_size);
+	} else {
+	  h = m(image_h / image_w * max_size);
+	}
+	$(this).css({height:h,width:w});
+  })
+};
+</script>
+}
+
+@section Title
+{
+<section id="title">
+	<header>
+	  <h1>Cart5 - Shop IT!</h1>
+	</header>
+</section>
+}
+
+	<table border="1">
+	@{
+	int count=1;
+	}
+	<tr>
+	@foreach (var item in Model.Products) 
+	{            
+			<td>
+				<div>
+					<a rel="#@item.Id.Replace("/","_")"><img alt="@item.Name" title="@item.Name" src="@item.ImageUrl" style="border:0px;" id="image_@item.Id" data-value='{"Id":"@item.Id","Name":"@item.Name","Image":"@item.ImageUrl","Price":@item.Price}' class="dragItem product"/></a>					 
+				</div>
+				<div>$@item.Price</div>
+			</td>            
+			if((count%3)==0)
+			{
+				@:</tr>
+				@:<tr>
+			}	
+	count++;
+	}	
+	</tr>
+	</table>   	
+	<div>
+	<div style="float:right" id="dropTarget"><a onclick="showCart()"><img id="cartImage" src="/images/cartempty.png" style="border:0px;" title="Your cart is empty"/></a></div>
+	<div>&nbsp;</div>
+	</div>
+	
+	<div id="debugger" style="height:100px;overflow:scroll;">
+		This is the debugger
+	</div>
+	@foreach (var item in Model.Products) 
+	{  
+	<div class="simple_overlay" id="@item.Id.Replace("/","_")">
+					 <img alt="@item.Name" title="@item.Name" src="@item.ImageUrl" style="border:0px;"/>
+					 <div class="details">					 
+					<h3>@item.Name</h3>
+
+					<h4>@item.Description</h4>
+
+					<p>Price:$@item.Price</p>
+					</div>
+					</div>
+	}
+	<a id="action" rel="#cartAction" ></a>
+	<div class="simple_overlay" id="cartAction" style="height:150px;width:500px;">
+		<div class="details">
+		<h3>You moved your cart!</h3>
+		<h4>You might want to <a onclick="submitForm('checkout')"><u>Checkout</u></a> or <a onclick="submitForm('cart')"><u>View Cart</u></a></h4>
+		</div>
+	</div>
+
+	<a id="cartView" rel="#cartModelView"></a>
+	<div id="cartModelView" class="simple_overlay" style="height:250px;width:500px;">
+		<div id="cartContainer" class="details" style="margin-top:27px;height:217px;width:499px;overflow:scroll;">
+		</div>
+	</div>
+
+	<form name="frmCart" id="frmCart" method="post" action="/Shop/Index">
+		<input type="hidden" name="cart" id="cart"/>
+		<input type="hidden" name="goto" id="goto"/>
+	</form>
+	<script type="text/javascript">
+	$(".product").resize(150);
+
+	var objdndHandler;
+	var myCart;
+	var myLogger;
+
+	addEvent(window,"load",function(e){
+
+	myLogger=new logger("#debugger");
+
+	objdndHandler=new dndHandler(".dragItem","#dropTarget","#debugger");
+	objdndHandler.init();
+	objdndHandler.attachLogger(myLogger);
+	objdndHandler.setItemDropHandler(itemDropHandler);
+	objdndHandler.setOnCartMove(cartMoveHandler);
+
+	myCart=new cart();
+	myCart.attachLogger(myLogger);
+	myCart.loadCart();
+	setCartText();
+	
+	if(myCart.getCartItemsJSON().length>0)
+	{
+	   myLogger.log("setting cart full");
+		objdndHandler.setDndDone();
+	}
+
+	$("a[rel]").overlay({
+	mask: {
+		color: '#CCCCCC',
+		loadSpeed: 200,
+		opacity: 0.7
+	},
+	closeOnClick: false
+	});
+
+	});	
+	
+	
+	function itemDropHandler(cartItem)
+	{
+		myCart.addToCart(cartItem);		
+		setCartText();
+	}
+
+	function setCartText()
+	{
+		var titleText=myCart.getCartItemsJSON().length.toString() + " item(s) in cart, click to view";
+		document.querySelector("#cartImage").title=titleText ;
+	}
+
+	function cartMoveHandler()
+	{
+		myLogger.log("You moved my cheese!!");
+		var objOverlay=$("#action").overlay();
+		objOverlay.onClose(function(){this.close();});
+		objOverlay.load();
+	}
+
+	function checkCart()
+	{
+		if(myCart.getCartItemsJSON().length==0)
+		{
+			alert('You need to shop something. Your cart is empty');
+			return false;
+		}
+
+		return true;
+	}
+
+
+	function submitForm(action)
+	{
+		if(checkCart())
+		{
+			var cart= document.querySelector("#cart");		
+			cart.value=myCart.getCartItems();
+			document.querySelector("input[name=goto]").value=action;						
+			document.frmCart.submit();
+		}
+	}
+	
+	function bindCart()
+	{
+		var items=myCart.getCartItemsJSON();
+		var cartTotal=0;
+		var cartHTML="<table border='1' style='width:450px' cellpadding='2'><tr><th>Item</td><th>Quantity</th><th>Price</th><th align='right'>Total</th></tr>";
+		for(var iLoop=0;iLoop<items.length;iLoop++)
+		{
+			var item=items[iLoop];
+			var total=item.Qty*item.Price;
+			cartTotal+=total;
+			cartHTML+="<tr><td><a onclick='removeItem(\""+item.Id+"\")' title='Remove item'><img src='/images/delete.png' style='border:0px;' /></a>"+item.Name+"</td><td>"+item.Qty+"</td><td>"+item.Price+"</td><td align='right'>"+total+"</td></tr>";
+		}
+
+		cartHTML+="<tr><td colspan='4' align='right'>Cart Total:$"+ cartTotal.toString() +"</td></tr>";
+		cartHTML+="</table>";
+		document.querySelector("#cartContainer").innerHTML=cartHTML;
+	}	
+
+	function showCart()
+	{
+		if(myCart.getCartItemsJSON().length>0)
+		{
+			bindCart();
+			var objOverlay=$("#cartView").overlay();
+			objOverlay.onClose(function(){this.close();});
+			objOverlay.load(); 
+		}
+	}
+
+	function removeItem(item)
+	{
+		myCart.removeFromCart(item);
+		setCartText();
+		bindCart();
+	}
+	
+	</script>
